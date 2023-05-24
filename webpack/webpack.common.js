@@ -5,7 +5,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
-    app: Path.resolve(__dirname, '../src/scripts/index.js'),
+    index: Path.resolve(__dirname, '../src/scripts/index.js'),
+    documentScanner: Path.resolve(__dirname, '../src/scripts/document-scanner.js')
   },
   output: {
     path: Path.join(__dirname, '../build'),
@@ -24,6 +25,13 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: Path.resolve(__dirname, '../src/index.html'),
+      filename: "index.html",
+      chunks: ['index'],
+    }),
+    new HtmlWebpackPlugin({
+      template: Path.resolve(__dirname, '../src/document-scanner.html'),
+      filename: "document-scanner.html",
+      chunks: ['documentScanner'],
     }),
   ],
   resolve: {
