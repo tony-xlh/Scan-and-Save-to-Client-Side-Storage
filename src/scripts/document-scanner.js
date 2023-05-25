@@ -233,6 +233,7 @@ function moveSelectedUp(){
   const documentViewer = document.getElementById("document-viewer");
   moveItemUp(images,index);
   moveItemUp(documentViewer,index);
+  scrollToElement(documentViewer,documentViewer.getElementsByClassName("page")[index-1]);
   saveImagesListToIndexedDB();
 }
 
@@ -241,6 +242,7 @@ function moveSelectedDown(){
   const documentViewer = document.getElementById("document-viewer");
   moveItemDown(images,index);
   moveItemDown(documentViewer,index);
+  scrollToElement(documentViewer,documentViewer.getElementsByClassName("page")[index+1]);
   saveImagesListToIndexedDB();
 }
 
@@ -251,4 +253,8 @@ async function removeSelected(){
   removeItem(images,index);
   removeItem(documentViewer,index);
   saveImagesListToIndexedDB();
+}
+
+function scrollToElement(parent,ele){
+  parent.scrollTo(0, ele.offsetTop - ele.offsetHeight);
 }
