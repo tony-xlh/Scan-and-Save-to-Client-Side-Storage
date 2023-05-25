@@ -158,7 +158,23 @@ async function displayImagesInIndexedDB(){
       page.className = "page";
       page.setAttribute("ID",ID);
       page.src = URL.createObjectURL(blob);
+      page.addEventListener("click",function(){
+        selectPage(ID);
+      });
       documentViewer.appendChild(page);
+    }
+  }
+}
+
+function selectPage(ID){
+  const documentViewer = document.getElementById("document-viewer");
+  const pages = documentViewer.getElementsByClassName("page");
+  for (let index = 0; index < pages.length; index++) {
+    const page = pages[index];
+    if (page.getAttribute("ID") === ID) {
+      page.classList.add("selected");
+    }else{
+      page.classList.remove("selected");
     }
   }
 }

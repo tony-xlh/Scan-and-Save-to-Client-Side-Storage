@@ -34,7 +34,7 @@ camera-preview {
 }
 
 #document-viewer {
-  width: 270px;
+  width: 300px;
   height: 360px;
   border: 1px solid #ccc;
   overflow: auto;
@@ -46,10 +46,11 @@ camera-preview {
 }
 
 .page.selected {
-  background: #b9b7ee;
+  padding: 4px;
+  border: 1px solid #fe8e14;
 }
 
 .page:hover {
-  background: #b9b7ee;
-  opacity: 0.9;
+  padding: 4px;
+  border: 1px solid #fea543;
 }
