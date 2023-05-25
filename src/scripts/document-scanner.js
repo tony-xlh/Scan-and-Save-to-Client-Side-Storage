@@ -1,6 +1,6 @@
 import '../styles/document-scanner.scss';
 import Dynamsoft from 'DWT';
-import {getUrlParam, arrayBufferToBlob, blobToArrayBuffer} from './utils';
+import {moveItemUp, moveItemDown, removeItem, getUrlParam, arrayBufferToBlob, blobToArrayBuffer} from './utils';
 import localforage  from 'localforage';
 console.log('webpack starterkit document scanner');
 
@@ -10,6 +10,7 @@ let services = [];
 let devices = [];
 let images = [];
 let documentID;
+let selectedID;
 
 let metadataStore = localforage.createInstance({
   name: "metadata"
@@ -55,6 +56,18 @@ function registerEvents(){
 
   document.getElementById("capture-button").addEventListener("click",async function(){
     takePhoto();
+  });
+
+  document.getElementById("move-up-button").addEventListener("click",async function(){
+    moveSelectedUp();
+  });
+
+  document.getElementById("move-down-button").addEventListener("click",async function(){
+    moveSelectedDown();
+  });
+
+  document.getElementById("remove-button").addEventListener("click",async function(){
+    removeSelected();
   });
 }
 
@@ -167,6 +180,7 @@ async function displayImagesInIndexedDB(){
 }
 
 function selectPage(ID){
+  selectedID = ID;
   const documentViewer = document.getElementById("document-viewer");
   const pages = documentViewer.getElementsByClassName("page");
   for (let index = 0; index < pages.length; index++) {
@@ -181,6 +195,10 @@ function selectPage(ID){
 
 function appendImageToProject(ID){
   images.push(ID);
+  saveImagesListToIndexedDB();
+}
+
+function saveImagesListToIndexedDB(){
   metadataStore.setItem(documentID,images);
 }
 
@@ -208,4 +226,29 @@ async function loadImagesListFromIndexedDB(){
     images = value;
     displayImagesInIndexedDB();
   }
+}
+
+function moveSelectedUp(){
+  const index = images.indexOf(selectedID);
+  const documentViewer = document.getElementById("document-viewer");
+  moveItemUp(images,index);
+  moveItemUp(documentViewer,index);
+  saveImagesListToIndexedDB();
+}
+
+function moveSelectedDown(){
+  const index = images.indexOf(selectedID);
+  const documentViewer = document.getElementById("document-viewer");
+  moveItemDown(images,index);
+  moveItemDown(documentViewer,index);
+  saveImagesListToIndexedDB();
+}
+
+async function removeSelected(){
+  const index = images.indexOf(selectedID);
+  await imagesStore.removeItem(selectedID);
+  const documentViewer = document.getElementById("document-viewer");
+  removeItem(images,index);
+  removeItem(documentViewer,index);
+  saveImagesListToIndexedDB();
 }
