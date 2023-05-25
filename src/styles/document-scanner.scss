@@ -42,4 +42,14 @@ camera-preview {
 
 .page {
   width: 100%;
+  padding: 5px;
+}
+
+.page.selected {
+  background: #b9b7ee;
+}
+
+.page:hover {
+  background: #b9b7ee;
+  opacity: 0.9;
 }
