@@ -32,3 +32,14 @@ camera-preview {
   z-index: 999;
   background: white;
 }
+
+#document-viewer {
+  width: 270px;
+  height: 360px;
+  border: 1px solid #ccc;
+  overflow: auto;
+}
+
+.page {
+  width: 100%;
+}

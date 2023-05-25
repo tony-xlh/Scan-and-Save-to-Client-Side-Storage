@@ -1,16 +1,34 @@
 import '../styles/document-scanner.scss';
 import Dynamsoft from 'DWT';
+import {getUrlParam, arrayBufferToBlob, blobToArrayBuffer} from './utils';
+import localforage  from 'localforage';
 console.log('webpack starterkit document scanner');
 
 Dynamsoft.DWT.ResourcesPath = "/dwt-resources";
 let DWRemoteScanObject;
 let services = [];
 let devices = [];
+let images = [];
+let documentID;
+
+let metadataStore = localforage.createInstance({
+  name: "metadata"
+});
+
+let imagesStore = localforage.createInstance({
+  name: "images"
+});
 
 window.onload = async function(){
+  documentID = getUrlParam("ID");
+  if (!documentID) {
+    alert("Empty document ID");
+    return;
+  }
   registerEvents();
   setupCamera();
   createRemoteScanObject();
+  loadImagesListFromIndexedDB();
 };
 
 function registerEvents(){
@@ -19,8 +37,7 @@ function registerEvents(){
   });
 
   document.getElementById("scan-button").addEventListener("click",async function(){
-    let deviceConfiguration = {IfCloseSourceAfterAcquire:true, Resolution:300,IfShowUI:false}; // scanning configuration. Check out the docs to learn more: https://www.dynamsoft.com/web-twain/docs/info/api/WebTwain_Acquire.html#acquireimage
-    await DWRemoteScanObject.acquireImage(devices[document.getElementById("devices-select").selectedIndex], deviceConfiguration);
+    scanDocument();
   });
 
   document.getElementById("connect-button").addEventListener("click",async function(){
@@ -60,10 +77,6 @@ async function loadDevices(){
 async function createRemoteScanObject(){
   let serverurl =  document.getElementById("serverURL").value;
   DWRemoteScanObject = await Dynamsoft.DWT.CreateRemoteScanObjectAsync(serverurl);
-  let element = document.getElementById("dwtcontrol-container");
-  DWRemoteScanObject.Viewer.bind(element); // Bind viewer
-  DWRemoteScanObject.Viewer.show(); // Show viewer
-  window.DWRemoteScanObject = DWRemoteScanObject;
   loadServices();  
 }
 
@@ -115,7 +128,68 @@ async function takePhoto(){
   const cameraElement = document.querySelector('camera-preview');
   const blob = await cameraElement.takePhoto(true);
   console.log(blob);
+  await saveImageToIndexedDB(blob);
   closeCamera();
 }
 
+async function scanDocument(){
+  let deviceConfiguration = {IfCloseSourceAfterAcquire:true, Resolution:300,IfShowUI:false}; // scanning configuration. Check out the docs to learn more: https://www.dynamsoft.com/web-twain/docs/info/api/WebTwain_Acquire.html#acquireimage
+  await DWRemoteScanObject.acquireImage(devices[document.getElementById("devices-select").selectedIndex], deviceConfiguration);
+  const blob = await DWRemoteScanObject.getImages([0],Dynamsoft.DWT.EnumDWT_ImageType.IT_PNG, Dynamsoft.DWT.EnumDWT_ImageFormatType.blob);
+  await DWRemoteScanObject.removeImages([0]);
+  saveImageToIndexedDB(blob);
+}
 
+async function displayImagesInIndexedDB(){
+  const documentViewer = document.getElementById("document-viewer");
+  const pages = documentViewer.getElementsByClassName("page");
+  for (let index = 0; index < images.length; index++) {
+    const ID = images[index];
+    const blob = await loadImageAsBlobFromIndexedDB(ID);
+    let page = pages[index];
+    if (page) {
+      if (page.getAttribute("ID") === ID) {
+        if (!page.getAttribute("src")) {
+          page.src = URL.createObjectURL(blob);
+        }
+      }
+    }else{
+      page = document.createElement("img");
+      page.className = "page";
+      page.setAttribute("ID",ID);
+      page.src = URL.createObjectURL(blob);
+      documentViewer.appendChild(page);
+    }
+  }
+}
+
+function appendImageToProject(ID){
+  images.push(ID);
+  metadataStore.setItem(documentID,images);
+}
+
+async function saveImageToIndexedDB(blob){
+  const ID = generateImageID();
+  const buffer = await blobToArrayBuffer(blob);
+  await imagesStore.setItem(ID,buffer);
+  appendImageToProject(ID);
+  await displayImagesInIndexedDB();
+}
+
+async function loadImageAsBlobFromIndexedDB(ID){
+  const buffer = await imagesStore.getItem(ID);
+  const blob = arrayBufferToBlob(buffer);
+  return blob;
+}
+
+function generateImageID(){
+  return Date.now().toString();
+}
+
+async function loadImagesListFromIndexedDB(){
+  const value = await metadataStore.getItem(documentID);
+  if (value) {
+    images = value;
+    displayImagesInIndexedDB();
+  }
+}
