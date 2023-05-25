@@ -41,7 +41,7 @@ camera-preview {
 }
 
 .page {
-  width: 100%;
+  width: calc(100% - 20px);
   padding: 5px;
 }
 
