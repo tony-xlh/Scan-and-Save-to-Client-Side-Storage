@@ -60,9 +60,10 @@ async function loadDevices(){
 async function createRemoteScanObject(){
   let serverurl =  document.getElementById("serverURL").value;
   DWRemoteScanObject = await Dynamsoft.DWT.CreateRemoteScanObjectAsync(serverurl);
-  let element = document.getElementById("dwtcontrolContainer");
+  let element = document.getElementById("dwtcontrol-container");
   DWRemoteScanObject.Viewer.bind(element); // Bind viewer
   DWRemoteScanObject.Viewer.show(); // Show viewer
+  window.DWRemoteScanObject = DWRemoteScanObject;
   loadServices();  
 }
 
