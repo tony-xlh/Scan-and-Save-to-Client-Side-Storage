@@ -23,8 +23,14 @@ export function moveItemUp(arr, index) {
   if (index <= 0 || index > arr.length - 1) { //out of bounds
     return arr;
   }else{
-    const item = arr.splice(index,1)[0] //delete the item
-    arr.splice(index - 1,0,item) //add the item
+    if (arr instanceof HTMLElement) {
+      const node1 = arr.children.item(index - 1);
+      const node2 = arr.children.item(index);
+      arr.insertBefore(node2,node1);
+    }else if (arr instanceof Array) {
+      const item = arr.splice(index,1)[0]; //delete the item
+      arr.splice(index - 1,0,item); //add the item
+    }
     return arr;
   }
 }
@@ -33,8 +39,14 @@ export function moveItemDown(arr, index) {
   if (index < 0 || index + 1 > arr.length - 1) { //out of bounds
     return arr;
   }else{
-    const item = arr.splice(index,1)[0] //delete the item
-    arr.splice(index + 1,0,item) //add the item
+    if (arr instanceof HTMLElement) {
+      const node1 = arr.children.item(index);
+      const node2 = arr.children.item(index + 1);
+      arr.insertBefore(node2,node1);
+    }else if (arr instanceof Array) {
+      const item = arr.splice(index,1)[0]; //delete the item
+      arr.splice(index + 1,0,item); //add the item
+    }
     return arr;
   }
 }
@@ -43,7 +55,11 @@ export function removeItem(arr, index) {
   if (index < 0 || index > arr.length - 1) { //out of bounds
     return arr;
   }else{
-    arr.splice(index,1) //delete the item
+    if (arr instanceof HTMLElement) {
+      arr.removeChild(arr.children.item(index));
+    }else if (arr instanceof Array) {
+      arr.splice(index,1); //delete the item
+    }
     return arr;
   }
 }
