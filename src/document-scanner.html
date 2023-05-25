@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Document Scanner</title>
   <meta name="description" content="A light foundation for your next frontend project based on webpack.">
+  <script type="module">
+    import { defineCustomElements } from 'https://cdn.jsdelivr.net/npm/camera-preview-component/dist/esm/loader.js';
+    defineCustomElements();
+  </script>
 </head>
 <body>
   <h1>Document Scanner</h1>
@@ -15,21 +19,26 @@
     </label>
   </div>
   <div>
-    <button id="connectButton">Connect</button>
+    <button id="connect-button">Connect</button>
   </div>
   <div>
-    <label for="servicesSelect">
+    <label for="services-select">
       Services:
-      <select id="servicesSelect"></select>
+      <select id="services-select"></select>
     </label>
   </div>
   <div>
-    <label for="devicesSelect">
+    <label for="devices-select">
       Devices:
-      <select id="devicesSelect"></select>
+      <select id="devices-select"></select>
     </label>
   </div>
-  <button id="scanButton">Scan</button>
+  <button id="scan-button">Scan</button>
+  <button id="take-photo-button">Take a Photo</button>
   <div id="dwtcontrolContainer" style="width: 350px; height: 380px;"></div>
+  <camera-preview style="display:none;">
+    <button id="close-button">Close</button>
+    <button id="capture-button">Take Photo</button>
+  </camera-preview>
 </body>
 </html>
