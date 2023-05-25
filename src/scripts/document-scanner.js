@@ -2,12 +2,13 @@ import '../styles/document-scanner.scss';
 import Dynamsoft from 'DWT';
 console.log('webpack starterkit document scanner');
 
+Dynamsoft.DWT.ResourcesPath = "/dwt-resources";
 let DWRemoteScanObject;
 let services = [];
 let devices = [];
 
+
 registerEvents();
-setupDWT();
 
 function registerEvents(){
   document.getElementById("servicesSelect").addEventListener("change",function(){
@@ -17,6 +18,10 @@ function registerEvents(){
   document.getElementById("scanButton").addEventListener("click",async function(){
     let deviceConfiguration = {IfCloseSourceAfterAcquire:true, Resolution:300,IfShowUI:false}; // scanning configuration. Check out the docs to learn more: https://www.dynamsoft.com/web-twain/docs/info/api/WebTwain_Acquire.html#acquireimage
     await DWRemoteScanObject.acquireImage(devices[document.getElementById("devicesSelect").selectedIndex], deviceConfiguration);
+  });
+
+  document.getElementById("connectButton").addEventListener("click",async function(){
+    createRemoteScanObject();
   });
 }
 
@@ -36,14 +41,8 @@ async function loadDevices(){
   }
 }
 
-async function setupDWT(){
-  let serverurl =  'https://demo.scannerproxy.com/'; // A public proxy server provided by Dynamsoft. You can also change to your own proxy server.
-  if (window.location.protocol === "https:") {
-    serverurl = 'https://tony.scannerproxy.com:10086/';
-  }else{
-    serverurl = 'http://tony.scannerproxy.com:10085/';
-  }
-  Dynamsoft.DWT.ResourcesPath = "/dwt-resources";
+async function createRemoteScanObject(){
+  let serverurl =  document.getElementById("serverURL").value;
   DWRemoteScanObject = await Dynamsoft.DWT.CreateRemoteScanObjectAsync(serverurl);
   let element = document.getElementById("dwtcontrolContainer");
   DWRemoteScanObject.Viewer.bind(element); // Bind viewer
