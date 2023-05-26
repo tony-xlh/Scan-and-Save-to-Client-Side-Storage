@@ -159,7 +159,7 @@ async function takePhoto(){
   const blob = await cameraElement.takePhoto(true);
   console.log(blob);
   await saveImageToIndexedDB(blob);
-  scrollToBottom();
+  setTimeout(scrollToBottom,200);
   closeCamera();
 }
 
@@ -173,7 +173,7 @@ async function scanDocument(){
   const blob = await DWRemoteScanObject.getImages([0],Dynamsoft.DWT.EnumDWT_ImageType.IT_PNG, Dynamsoft.DWT.EnumDWT_ImageFormatType.blob);
   await DWRemoteScanObject.removeImages([0]);
   await saveImageToIndexedDB(blob);
-  scrollToBottom();
+  setTimeout(scrollToBottom,200);
 }
 
 async function displayImagesInIndexedDB(){
