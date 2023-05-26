@@ -2,6 +2,8 @@
 
 A demo which scans documents with [Dynamic Web TWAIN](https://www.dynamsoft.com/web-twain/overview/) and stores them in IndexedDB
 
+[Online demo](https://magnificent-torrone-e94292.netlify.app/)
+
 
 Demo video of scanning documents:
 
