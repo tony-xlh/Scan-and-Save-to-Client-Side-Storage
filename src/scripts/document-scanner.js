@@ -1,5 +1,5 @@
 import '../styles/document-scanner.scss';
-import Dynamsoft from 'DWT';
+import Dynamsoft from 'dwt';
 import {moveItemUp, moveItemDown, removeItem, getUrlParam, arrayBufferToBlob, blobToArrayBuffer} from './utils';
 import localforage  from 'localforage';
 console.log('webpack starterkit document scanner');
