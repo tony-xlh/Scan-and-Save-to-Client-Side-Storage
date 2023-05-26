@@ -73,6 +73,10 @@ function registerEvents(){
   document.getElementById("remove-button").addEventListener("click",async function(){
     removeSelected();
   });
+
+  document.getElementById("download-button").addEventListener("click",async function(){
+    downloadSelected();
+  });
 }
 
 async function loadDevices(){
@@ -224,7 +228,7 @@ async function saveImageToIndexedDB(blob){
 
 async function loadImageAsBlobFromIndexedDB(ID){
   const buffer = await imagesStore.getItem(ID);
-  const blob = arrayBufferToBlob(buffer);
+  const blob = arrayBufferToBlob(buffer,{type: "image/png"});
   return blob;
 }
 
@@ -299,4 +303,18 @@ function loadImageToDWT(blob){
       function(ec,es){reject(es);}
     );
   });
+}
+
+async function downloadSelected(){
+  const buffer = await imagesStore.getItem(selectedID);
+  if (buffer) {
+    const blob = arrayBufferToBlob(buffer,{type: "image/png"});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = selectedID+".png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  
 }
