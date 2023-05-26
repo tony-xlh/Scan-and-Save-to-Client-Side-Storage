@@ -17,9 +17,24 @@ module.exports = {
   },
   optimization: {
     splitChunks: {
-      chunks: 'all',
-      name: false,
+      cacheGroups: {
+        common: {
+          name: "common",
+          chunks: "initial",
+          minSize: 1,
+          priority: 0,
+          minChunks: 2, 
+        },
+        vendor: {
+          name: "vendor",
+          test: /[\\/]node_modules[\\/]/,
+          chunks: "initial",
+          priority: 10,
+          minChunks: 2,
+        }
+      }
     },
+    runtimeChunk: { name: 'manifest' }
   },
   plugins: [
     new CleanWebpackPlugin(),
