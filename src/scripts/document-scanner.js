@@ -154,7 +154,11 @@ async function takePhoto(){
 }
 
 async function scanDocument(){
-  let deviceConfiguration = {IfCloseSourceAfterAcquire:true, Resolution:300,IfShowUI:false}; // scanning configuration. Check out the docs to learn more: https://www.dynamsoft.com/web-twain/docs/info/api/WebTwain_Acquire.html#acquireimage
+  let deviceConfiguration = {
+    IfFeederEnabled: false,
+    IfCloseSourceAfterAcquire:true, 
+    Resolution:200,
+    IfShowUI:false}; // scanning configuration. Check out the docs to learn more: https://www.dynamsoft.com/web-twain/docs/info/api/WebTwain_Acquire.html#acquireimage
   await DWRemoteScanObject.acquireImage(devices[document.getElementById("devices-select").selectedIndex], deviceConfiguration);
   const blob = await DWRemoteScanObject.getImages([0],Dynamsoft.DWT.EnumDWT_ImageType.IT_PNG, Dynamsoft.DWT.EnumDWT_ImageFormatType.blob);
   await DWRemoteScanObject.removeImages([0]);
