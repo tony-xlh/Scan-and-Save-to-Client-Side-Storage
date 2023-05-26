@@ -1,6 +1,6 @@
 import '../styles/document-scanner.scss';
 import Dynamsoft from 'dwt';
-import {moveItemUp, moveItemDown, removeItem, getUrlParam, arrayBufferToBlob, blobToArrayBuffer} from './utils';
+import {rotateImage, moveItemUp, moveItemDown, removeItem, getUrlParam, arrayBufferToBlob, blobToArrayBuffer} from './utils';
 import localforage  from 'localforage';
 console.log('webpack starterkit document scanner');
 
@@ -11,6 +11,7 @@ let devices = [];
 let images = [];
 let documentID;
 let selectedID;
+let selectedPage;
 
 let metadataStore = localforage.createInstance({
   name: "metadata"
@@ -68,6 +69,10 @@ function registerEvents(){
 
   document.getElementById("move-down-button").addEventListener("click",async function(){
     moveSelectedDown();
+  });
+
+  document.getElementById("rotate-button").addEventListener("click",async function(){
+    rotateSelected();
   });
 
   document.getElementById("remove-button").addEventListener("click",async function(){
@@ -203,6 +208,7 @@ function selectPage(ID){
     const page = pages[index];
     if (page.getAttribute("ID") === ID) {
       page.classList.add("selected");
+      selectedPage = page;
     }else{
       page.classList.remove("selected");
     }
@@ -218,11 +224,17 @@ function saveImagesListToIndexedDB(){
   metadataStore.setItem(documentID,images);
 }
 
-async function saveImageToIndexedDB(blob){
-  const ID = generateImageID();
+async function saveImageToIndexedDB(blob,ID){
+  let newImage = false;
+  if (!ID) {
+    newImage = true;
+    ID = generateImageID();
+  }
   const buffer = await blobToArrayBuffer(blob);
   await imagesStore.setItem(ID,buffer);
-  appendImageToProject(ID);
+  if (newImage) {
+    appendImageToProject(ID);
+  }
   await displayImagesInIndexedDB();
 }
 
@@ -305,6 +317,14 @@ function loadImageToDWT(blob){
   });
 }
 
+async function rotateSelected(){
+  if (selectedPage) {
+    const rotatedBlob = await rotateImage(selectedPage,90);
+    selectedPage.src = URL.createObjectURL(rotatedBlob);
+    await saveImageToIndexedDB(rotatedBlob,selectedID);
+  }
+}
+
 async function downloadSelected(){
   const buffer = await imagesStore.getItem(selectedID);
   if (buffer) {
@@ -316,5 +336,4 @@ async function downloadSelected(){
     link.click();
     document.body.removeChild(link);
   }
-  
 }

@@ -63,3 +63,30 @@ export function removeItem(arr, index) {
     return arr;
   }
 }
+
+export function rotateImage(imgElement,rotationDegree){
+  return new Promise(function (resolve, reject) {
+    try {
+      let canvas = document.createElement("canvas");
+      let ctx = canvas.getContext("2d");	
+      // Assign width and height.
+      if (rotationDegree === -180) {
+        canvas.width = imgElement.naturalWidth;
+        canvas.height = imgElement.naturalHeight;
+      }else{
+        canvas.width = imgElement.naturalHeight;
+        canvas.height = imgElement.naturalWidth;
+      }
+      ctx.translate(canvas.width / 2,canvas.height / 2);
+      // Rotate the image and draw it on the canvas. 
+      // (I am not showing the canvas on the webpage.
+      ctx.rotate(rotationDegree * Math.PI / 180);
+      ctx.drawImage(imgElement, -imgElement.naturalWidth / 2, -imgElement.naturalHeight / 2);
+      canvas.toBlob(function(blob){
+        resolve(blob);
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
