@@ -58,6 +58,10 @@ function registerEvents(){
     takePhoto();
   });
 
+  document.getElementById("save-button").addEventListener("click",async function(){
+    exportToPDF();
+  });
+  
   document.getElementById("move-up-button").addEventListener("click",async function(){
     moveSelectedUp();
   });
@@ -96,7 +100,10 @@ async function createRemoteScanObject(){
 
 async function loadServices(){
   try {
-    services = await DWRemoteScanObject.getDynamsoftService();  
+    services = await DWRemoteScanObject.getDynamsoftService();
+    if (services.length>0) {
+      DWRemoteScanObject.setDefaultDynamsoftService(services[0]);
+    }
   } catch (error) {
     alert(error.message);
     return;
@@ -258,4 +265,34 @@ async function removeSelected(){
 
 function scrollToElement(parent,ele){
   parent.scrollTo(0, ele.offsetTop - ele.offsetHeight);
+}
+
+async function exportToPDF(){
+  const status = document.getElementById("status");
+  status.innerText = "Exporting...";
+  let indices = [];
+  let j = 0;
+  for (let index = 0; index < images.length; index++) {
+    const ID = images[index];
+    const buffer = await imagesStore.getItem(ID);
+    if (buffer) {
+      indices.push(j);
+      const blob = arrayBufferToBlob(buffer);
+      await loadImageToDWT(blob);
+      j = j + 1;
+    }
+  }
+  await DWRemoteScanObject.saveImages("scanned.pdf",indices,Dynamsoft.DWT.EnumDWT_ImageType.IT_PDF);
+  await DWRemoteScanObject.removeImages(indices);
+  status.innerText = "";
+}
+
+function loadImageToDWT(blob){
+  return new Promise((resolve,reject)=>{
+    DWRemoteScanObject._defaultDSScanClient.__LoadImageFromBytesV2(blob, 
+      Dynamsoft.DWT.EnumDWT_ImageType.IT_PNG, "", true, 0, 0, false, 3, 
+      function(){resolve("OK");}, 
+      function(ec,es){reject(es);}
+    );
+  });
 }
