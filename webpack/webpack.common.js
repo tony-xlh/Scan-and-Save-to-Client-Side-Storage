@@ -8,6 +8,9 @@ module.exports = {
     index: Path.resolve(__dirname, '../src/scripts/index.js'),
     documentScanner: Path.resolve(__dirname, '../src/scripts/document-scanner.js')
   },
+  experiments: {
+    syncWebAssembly: true,
+  },
   output: {
     path: Path.join(__dirname, '../build'),
     filename: 'js/[name].js',
