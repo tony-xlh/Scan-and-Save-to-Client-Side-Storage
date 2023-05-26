@@ -159,6 +159,7 @@ async function takePhoto(){
   const blob = await cameraElement.takePhoto(true);
   console.log(blob);
   await saveImageToIndexedDB(blob);
+  scrollToBottom();
   closeCamera();
 }
 
@@ -171,7 +172,8 @@ async function scanDocument(){
   await DWRemoteScanObject.acquireImage(devices[document.getElementById("devices-select").selectedIndex], deviceConfiguration);
   const blob = await DWRemoteScanObject.getImages([0],Dynamsoft.DWT.EnumDWT_ImageType.IT_PNG, Dynamsoft.DWT.EnumDWT_ImageFormatType.blob);
   await DWRemoteScanObject.removeImages([0]);
-  saveImageToIndexedDB(blob);
+  await saveImageToIndexedDB(blob);
+  scrollToBottom();
 }
 
 async function displayImagesInIndexedDB(){
@@ -285,6 +287,11 @@ async function removeSelected(){
 
 function scrollToElement(parent,ele){
   parent.scrollTo(0, ele.offsetTop - ele.offsetHeight);
+}
+
+function scrollToBottom(){
+  const documentViewer = document.getElementById("document-viewer");
+  documentViewer.scrollTo(0,documentViewer.scrollHeight);
 }
 
 async function exportToPDF(){
