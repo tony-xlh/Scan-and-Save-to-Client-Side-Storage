@@ -5,11 +5,16 @@ A demo which scans documents with [Dynamic Web TWAIN](https://www.dynamsoft.com/
 
 Demo video of scanning documents:
 
-https://github.com/tony-xlh/Scan-and-Save-to-Client-Side-Storage/assets/112376616/2bd58c29-3e3a-4ab8-aec9-72e3265a5afd
+
+https://github.com/tony-xlh/Scan-and-Save-to-Client-Side-Storage/assets/112376616/c0c29c79-14ca-4ab2-85c3-4d7ae0158da6
+
 
 Demo video of opening an existing document:
 
-https://github.com/tony-xlh/Scan-and-Save-to-Client-Side-Storage/assets/112376616/1a5ec307-296a-48ad-b79b-beb0485e1a93
+
+
+https://github.com/tony-xlh/Scan-and-Save-to-Client-Side-Storage/assets/112376616/8a7df5d0-678e-4018-9f58-f8431f9f1382
+
 
 
 ### Installation
